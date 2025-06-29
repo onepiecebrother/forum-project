@@ -293,6 +293,7 @@ export type Database = {
           social_facebook: string | null;
           social_telegram: string | null;
           tags: string[];
+          status: 'pending' | 'approved' | 'rejected';
           created_at: string;
           updated_at: string;
         };
@@ -313,6 +314,7 @@ export type Database = {
           social_facebook?: string | null;
           social_telegram?: string | null;
           tags?: string[];
+          status?: 'pending' | 'approved' | 'rejected';
         };
         Update: {
           profile_picture?: string | null;
@@ -330,6 +332,7 @@ export type Database = {
           social_facebook?: string | null;
           social_telegram?: string | null;
           tags?: string[];
+          status?: 'pending' | 'approved' | 'rejected';
         };
       };
     };
