@@ -19,6 +19,7 @@ export type Database = {
           is_verified: boolean;
           is_admin: boolean;
           is_owner: boolean;
+          is_banned: boolean;
           honorable_title: string | null;
           created_at: string;
           updated_at: string;
@@ -33,6 +34,7 @@ export type Database = {
           is_verified?: boolean;
           is_admin?: boolean;
           is_owner?: boolean;
+          is_banned?: boolean;
           honorable_title?: string | null;
         };
         Update: {
@@ -44,6 +46,7 @@ export type Database = {
           is_verified?: boolean;
           is_admin?: boolean;
           is_owner?: boolean;
+          is_banned?: boolean;
           honorable_title?: string | null;
         };
       };
@@ -53,7 +56,20 @@ export type Database = {
           name: string;
           description: string;
           color: string;
+          sort_order: number;
           created_at: string;
+        };
+        Insert: {
+          name: string;
+          description?: string;
+          color?: string;
+          sort_order?: number;
+        };
+        Update: {
+          name?: string;
+          description?: string;
+          color?: string;
+          sort_order?: number;
         };
       };
       threads: {
@@ -66,8 +82,27 @@ export type Database = {
           is_pinned: boolean;
           is_locked: boolean;
           views: number;
+          is_edited: boolean;
+          edited_at: string | null;
+          edit_count: number;
           created_at: string;
           updated_at: string;
+        };
+        Insert: {
+          title: string;
+          content: string;
+          author_id: string;
+          category_id: string;
+          is_pinned?: boolean;
+          is_locked?: boolean;
+          views?: number;
+        };
+        Update: {
+          title?: string;
+          content?: string;
+          is_pinned?: boolean;
+          is_locked?: boolean;
+          views?: number;
         };
       };
       posts: {
@@ -76,8 +111,19 @@ export type Database = {
           content: string;
           author_id: string;
           thread_id: string;
+          is_edited: boolean;
+          edited_at: string | null;
+          edit_count: number;
           created_at: string;
           updated_at: string;
+        };
+        Insert: {
+          content: string;
+          author_id: string;
+          thread_id: string;
+        };
+        Update: {
+          content?: string;
         };
       };
       verification_requests: {
@@ -95,6 +141,27 @@ export type Database = {
           user_id: string;
           content: string;
           images?: string[];
+          status?: 'pending' | 'approved' | 'rejected';
+          admin_notes?: string | null;
+        };
+        Update: {
+          status?: 'pending' | 'approved' | 'rejected';
+          admin_notes?: string | null;
+        };
+      };
+      admin_requests: {
+        Row: {
+          id: string;
+          user_id: string;
+          content: string;
+          status: 'pending' | 'approved' | 'rejected';
+          admin_notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          content: string;
           status?: 'pending' | 'approved' | 'rejected';
           admin_notes?: string | null;
         };
@@ -125,6 +192,7 @@ export type Database = {
           description: string;
           initiator_images: string[];
           status: 'pending' | 'negotiating' | 'approved' | 'rejected' | 'cancelled';
+          deal_type: 'hire_agent' | 'transaction' | 'other';
           created_at: string;
           updated_at: string;
         };
@@ -135,6 +203,7 @@ export type Database = {
           description: string;
           initiator_images?: string[];
           status?: 'pending' | 'negotiating' | 'approved' | 'rejected' | 'cancelled';
+          deal_type?: 'hire_agent' | 'transaction' | 'other';
         };
         Update: {
           status?: 'pending' | 'negotiating' | 'approved' | 'rejected' | 'cancelled';
@@ -158,6 +227,109 @@ export type Database = {
           images?: string[];
           response_type: 'recipient_response' | 'admin_approval';
           is_approved?: boolean | null;
+        };
+      };
+      deal_reviews: {
+        Row: {
+          id: string;
+          deal_id: string;
+          reviewer_id: string;
+          reviewee_id: string;
+          rating: number;
+          review_text: string;
+          created_at: string;
+        };
+        Insert: {
+          deal_id: string;
+          reviewer_id: string;
+          reviewee_id: string;
+          rating: number;
+          review_text: string;
+        };
+        Update: {
+          rating?: number;
+          review_text?: string;
+        };
+      };
+      review_assessments: {
+        Row: {
+          id: string;
+          review_id: string;
+          user_id: string;
+          reason: string | null;
+          status: 'pending' | 'approved' | 'rejected';
+          admin_notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          review_id: string;
+          user_id: string;
+          reason?: string | null;
+          status?: 'pending' | 'approved' | 'rejected';
+          admin_notes?: string | null;
+        };
+        Update: {
+          status?: 'pending' | 'approved' | 'rejected';
+          admin_notes?: string | null;
+        };
+      };
+      agents: {
+        Row: {
+          id: string;
+          user_id: string;
+          profile_picture: string | null;
+          height: string | null;
+          weight: string | null;
+          current_location: string | null;
+          services: string[];
+          pricing_short_time: string | null;
+          pricing_long_time: string | null;
+          pricing_overnight: string | null;
+          pricing_private: string | null;
+          description: string | null;
+          social_twitter: string | null;
+          social_instagram: string | null;
+          social_facebook: string | null;
+          social_telegram: string | null;
+          tags: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          profile_picture?: string | null;
+          height?: string | null;
+          weight?: string | null;
+          current_location?: string | null;
+          services?: string[];
+          pricing_short_time?: string | null;
+          pricing_long_time?: string | null;
+          pricing_overnight?: string | null;
+          pricing_private?: string | null;
+          description?: string | null;
+          social_twitter?: string | null;
+          social_instagram?: string | null;
+          social_facebook?: string | null;
+          social_telegram?: string | null;
+          tags?: string[];
+        };
+        Update: {
+          profile_picture?: string | null;
+          height?: string | null;
+          weight?: string | null;
+          current_location?: string | null;
+          services?: string[];
+          pricing_short_time?: string | null;
+          pricing_long_time?: string | null;
+          pricing_overnight?: string | null;
+          pricing_private?: string | null;
+          description?: string | null;
+          social_twitter?: string | null;
+          social_instagram?: string | null;
+          social_facebook?: string | null;
+          social_telegram?: string | null;
+          tags?: string[];
         };
       };
     };
