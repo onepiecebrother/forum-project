@@ -1,97 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { supabase } from './lib/supabase';
-import { ThemeProvider } from './contexts/ThemeContext';
-import Layout from './components/Layout';
-import ForumPage from './pages/ForumPage';
-import AdminPage from './pages/AdminPage';
-import OwnerPage from './pages/OwnerPage';
-import ThreadPage from './pages/ThreadPage';
-import UserPage from './pages/UserPage';
-import DealsPage from './pages/DealsPage';
-import AgentPage from './pages/AgentPage';
-import AuthModal from './components/AuthModal';
-import ProfileModal from './components/ProfileModal';
-import SettingsModal from './components/SettingsModal';
+import { supabase } from '@/lib/supabase';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { useAuth } from '@/hooks';
+import Layout from '@/components/layout/Layout';
+import ForumPage from '@/pages/ForumPage';
+import AdminPage from '@/pages/AdminPage';
+import OwnerPage from '@/pages/OwnerPage';
+import ThreadPage from '@/pages/ThreadPage';
+import UserPage from '@/pages/UserPage';
+import DealsPage from '@/pages/DealsPage';
+import AgentPage from '@/pages/AgentPage';
+import AuthModal from '@/components/AuthModal';
+import ProfileModal from '@/components/ProfileModal';
+import SettingsModal from '@/components/SettingsModal';
 
 function App() {
-  const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, profile, loading, fetchProfile, logout } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-
-  useEffect(() => {
-    initAuth();
-  }, []);
-
-  const initAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) {
-      setUser(session.user);
-      await fetchProfile(session.user.id);
-    }
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session?.user?.id);
-      
-      if (event === 'SIGNED_OUT' || !session?.user) {
-        console.log('User signed out, clearing state');
-        setUser(null);
-        setProfile(null);
-        setShowProfile(false);
-      } else if (session?.user) {
-        console.log('User signed in:', session.user.id);
-        setUser(session.user);
-        await fetchProfile(session.user.id);
-      }
-    });
-
-    setLoading(false);
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  };
-
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-    
-    if (data) setProfile(data);
-  };
-
-  const handleLogout = async () => {
-    try {
-      console.log('Logout initiated');
-      
-      setUser(null);
-      setProfile(null);
-      setShowProfile(false);
-      
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Supabase signout error:', error);
-        throw error;
-      }
-      
-      console.log('Logout successful');
-      
-    } catch (error: any) {
-      console.error('Error logging out:', error);
-      alert(`Error logging out: ${error.message}`);
-      
-      try {
-        await supabase.auth.signOut({ scope: 'local' });
-      } catch (localError) {
-        console.error('Local signout also failed:', localError);
-      }
-    }
-  };
 
   if (loading) {
     return (
@@ -112,7 +40,7 @@ function App() {
           onAuthClick={() => setShowAuthModal(true)}
           onProfileClick={() => setShowProfile(true)}
           onSettingsClick={() => setShowSettings(true)}
-          onLogout={handleLogout}
+          onLogout={logout}
         >
           <Routes>
             <Route 

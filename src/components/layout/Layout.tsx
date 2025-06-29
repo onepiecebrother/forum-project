@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { User, Crown, Shield, LogOut, Home, Settings, Handshake, Users, Bell, MessageSquare, ChevronDown } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/lib/supabase';
+import type { UserProfile, SiteSettings } from '@/types';
 
 interface LayoutProps {
   children: React.ReactNode;
   user?: any;
-  profile?: any;
+  profile?: UserProfile;
   onAuthClick: () => void;
   onProfileClick?: () => void;
   onSettingsClick?: () => void;
@@ -29,9 +30,12 @@ export default function Layout({
   const isOwnerPage = location.pathname === '/owner';
   const isDealsPage = location.pathname === '/deals';
   const isAgentPage = location.pathname === '/agents';
-  const [siteSettings, setSiteSettings] = useState({
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>({
+    id: '',
     site_title: 'Elite Forum',
-    site_logo_url: ''
+    site_logo_url: '',
+    created_at: '',
+    updated_at: ''
   });
 
   useEffect(() => {
@@ -63,8 +67,11 @@ export default function Layout({
       
       if (data) {
         setSiteSettings({
+          id: data.id,
           site_title: data.site_title || 'Elite Forum',
-          site_logo_url: data.site_logo_url || ''
+          site_logo_url: data.site_logo_url || '',
+          created_at: data.created_at,
+          updated_at: data.updated_at
         });
         
         // Update document title

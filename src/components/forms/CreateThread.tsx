@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { X, Send } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/lib/supabase';
+import type { ModalProps, Category } from '@/types';
 
-interface CreateThreadProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface CreateThreadProps extends ModalProps {
   onThreadCreated: () => void;
 }
 
 export default function CreateThread({ isOpen, onClose, onThreadCreated }: CreateThreadProps) {
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',

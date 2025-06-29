@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, MessageSquare, Users, Handshake, Search, Bell, Zap } from 'lucide-react';
+import { Plus, MessageSquare, Search, Bell } from 'lucide-react';
 
 interface QuickActionsProps {
   user?: any;
